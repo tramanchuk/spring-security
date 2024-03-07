@@ -29,7 +29,17 @@ public class WebSecurityConfig {
                                 .requestMatchers("/customers/**").hasRole("USER")
                                 .requestMatchers("/orders/**").hasRole("ADMIN")
                                 .anyRequest().authenticated())
-                .httpBasic(withDefaults());
+                .formLogin(httpSecurityFormLoginConfigurer -> {
+                    httpSecurityFormLoginConfigurer.loginPage("/login")
+                            .failureUrl("/login?error")
+                            .permitAll();
+                })
+                .logout(httpSecurityLogoutConfigurer -> {
+                    httpSecurityLogoutConfigurer.clearAuthentication(true)
+                            .invalidateHttpSession(true)
+                            .logoutSuccessUrl("/login?logout")
+                            .permitAll();
+                });
         return http.build();
     }
 
